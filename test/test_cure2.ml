@@ -96,7 +96,22 @@ let tests_instance : t =
     )
   ; ( rep (charset Charset.[Ascii.alnum; Ascii.punct])
     , [("abc123", true); ("abc123...", true); (".", true); ("]]]]]]b]] ", false)]
-    ) ]
+    )
+  ; ( opt (chars "+-")
+      + ((rep1 digit + opt (char '.' + rep digit)) || (char '.' + rep1 digit))
+      + opt (chars "eE" + opt (chars "+-") + rep1 digit)
+    , [ ("12345", true)
+      ; ("12345.5", true)
+      ; ("12345e+123", true)
+      ; ("-12345e+123", true)
+      ; (".12345e+123", true)
+      ; ("+.12345e+123", true)
+      ; ("-.12345e+123", true)
+      ; ("+12345e+123", true)
+      ; ("12345e12", true)
+      ; ("12345e-12", true)
+      ; ("12345E-12", true)
+      ; ("12345.234E-12", true) ] ) ]
 
 let () =
   let open Alcotest in

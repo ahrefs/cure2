@@ -19,8 +19,14 @@ val alt : t list -> t
 
     The leftmost match is preferred. *)
 
+val ( || ) : t -> t -> t
+(** [(||) x y ] is [alt [x; y]] *)
+
 val seq : t list -> t
 (** Sequence *)
+
+val ( + ) : t -> t -> t
+(** [(+) x y ] is [seq [x; y]] *)
 
 val rep : t -> t
 (** 0 or more matches *)
@@ -164,6 +170,9 @@ val not_word : t
 
 val not_xdigit : t
 (**	not ascii hex digit ( [0-9A-Fa-f])*)
+
+val chars : string -> t
+(** any character of the string *)
 
 val charset : ?neg:bool -> charset list -> t
 (** [charset cs] matches any character that is part of [cs]

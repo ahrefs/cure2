@@ -112,7 +112,11 @@ let char c = String (String.make 1 c)
 
 let seq li = Seq li
 
+let ( + ) x y = seq [x; y]
+
 let alt li = Alt li
+
+let ( || ) x y = alt [x; y]
 
 let rep t = Rep t
 
@@ -659,3 +663,5 @@ let not_upper = charset ~neg:true [Charset.Ascii.upper]
 let not_word = charset ~neg:true [Charset.Ascii.word]
 
 let not_xdigit = charset ~neg:true [Charset.Ascii.xdigit]
+
+let chars str = charset [Charset.chars str]
