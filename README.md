@@ -16,3 +16,6 @@ hover on anything you are not familiar with and documentation will show up.
 
 The interface is inspired by the `Re` library, but there are a few difference in
 cases where I thought the naming scheme could be improved.
+
+The main reason to use this over `Re` is the Unicode support. There are also
+performance differences, but according to my testing they are minimal.
