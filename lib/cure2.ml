@@ -124,15 +124,15 @@ let opt t = repn t 0 (Some 1)
 
 let any = regex "."
 
-let notnl = regex {|[^\n]|}
+let notnl = Charset (true, [Single '\n'])
 
 let greedy t = Flags ("-U", t)
 
 let non_greedy t = Flags ("U", t)
 
 let case t = Flags ("-i", t)
-let no_case t = Flags ("i", t)
 
+let no_case t = Flags ("i", t)
 
 let bol = regex {|^|}
 
@@ -603,3 +603,59 @@ module Charset = struct
     let zanabazar_Square = Unicode "Zanabazar_Square"
   end
 end
+
+let alnum = charset [Charset.Ascii.alnum]
+
+let alpha = charset [Charset.Ascii.alpha]
+
+let ascii = charset [Charset.Ascii.ascii]
+
+let blank = charset [Charset.Ascii.blank]
+
+let cntrl = charset [Charset.Ascii.cntrl]
+
+let digit = charset [Charset.Ascii.digit]
+
+let graph = charset [Charset.Ascii.graph]
+
+let lower = charset [Charset.Ascii.lower]
+
+let print = charset [Charset.Ascii.print]
+
+let punct = charset [Charset.Ascii.punct]
+
+let space = charset [Charset.Ascii.space]
+
+let upper = charset [Charset.Ascii.upper]
+
+let word = charset [Charset.Ascii.word]
+
+let xdigit = charset [Charset.Ascii.xdigit]
+
+let not_alnum = charset ~neg:true [Charset.Ascii.alnum]
+
+let not_alpha = charset ~neg:true [Charset.Ascii.alpha]
+
+let not_ascii = charset ~neg:true [Charset.Ascii.ascii]
+
+let not_blank = charset ~neg:true [Charset.Ascii.blank]
+
+let not_cntrl = charset ~neg:true [Charset.Ascii.cntrl]
+
+let not_digit = charset ~neg:true [Charset.Ascii.digit]
+
+let not_graph = charset ~neg:true [Charset.Ascii.graph]
+
+let not_lower = charset ~neg:true [Charset.Ascii.lower]
+
+let not_print = charset ~neg:true [Charset.Ascii.print]
+
+let not_punct = charset ~neg:true [Charset.Ascii.punct]
+
+let not_space = charset ~neg:true [Charset.Ascii.space]
+
+let not_upper = charset ~neg:true [Charset.Ascii.upper]
+
+let not_word = charset ~neg:true [Charset.Ascii.word]
+
+let not_xdigit = charset ~neg:true [Charset.Ascii.xdigit]

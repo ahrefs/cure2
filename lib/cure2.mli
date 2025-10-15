@@ -71,13 +71,103 @@ val case : t -> t
 val no_case : t -> t
 (** Case insensitive matching. Off by default/*)
 
-val any : t
-
-val notnl : t
-
 val group : ?name:string -> t -> t
 
+(** {2 Charsets} *)
+
+val any : t
+(** any character, including newline. To exclude newline, use {!notnl} *)
+
+val notnl : t
+(** any character except newline. *)
+
+val alnum : t
+(** ascii alphanumeric ( [0-9A-Za-z])*)
+
+val alpha : t
+(** ascii alphabetic ( [A-Za-z])*)
+
+val ascii : t
+(** ascii ASCII ( [\x00-\x7F])*)
+
+val blank : t
+(** ascii blank ( [\t ])*)
+
+val cntrl : t
+(** ascii control ( [\x00-\x1F\x7F])*)
+
+val digit : t
+(** ascii digits ( [0-9])*)
+
+val graph : t
+(** ascii graphical ( [!-~]  [A-Za-z0-9!""#$%&'()*+,\-./:;<=>?@[\\\]^_`{}|~])*)
+
+val lower : t
+(** ascii lower case ( [a-z])*)
+
+val print : t
+(** ascii printable ( [ -~]  [ [:graph:]])*)
+
+val punct : t
+(** ascii punctuation ( [!-/:-@[-`{-~])*)
+
+val space : t
+(** ascii whitespace ( [\t\n\v\f\r ])*)
+
+val upper : t
+(** ascii upper case ( [A-Z])*)
+
+val word : t
+(** ascii word characters ( [0-9A-Za-z_])*)
+
+val xdigit : t
+(**	ascii hex digit ( [0-9A-Fa-f])*)
+
+val not_alnum : t
+(** not ascii alphanumeric ( [0-9A-Za-z])*)
+
+val not_alpha : t
+(** not ascii alphabetic ( [A-Za-z])*)
+
+val not_ascii : t
+(** not ascii ASCII ( [\x00-\x7F])*)
+
+val not_blank : t
+(** not ascii blank ( [\t ])*)
+
+val not_cntrl : t
+(** not ascii control ( [\x00-\x1F\x7F])*)
+
+val not_digit : t
+(** not ascii digits ( [0-9])*)
+
+val not_graph : t
+(** not ascii graphical ( [!-~]  [A-Za-z0-9!""#$%&'()*+,\-./:;<=>?@[\\\]^_`{}|~])*)
+
+val not_lower : t
+(** not ascii lower case ( [a-z])*)
+
+val not_print : t
+(** not ascii printable ( [ -~]  [ [:graph:]])*)
+
+val not_punct : t
+(** not ascii punctuation ( [!-/:-@[-`{-~])*)
+
+val not_space : t
+(** not ascii whitespace ( [\t\n\v\f\r ])*)
+
+val not_upper : t
+(** not ascii upper case ( [A-Z])*)
+
+val not_word : t
+(** not ascii word characters ( [0-9A-Za-z_])*)
+
+val not_xdigit : t
+(**	not ascii hex digit ( [0-9A-Fa-f])*)
+
 val charset : ?neg:bool -> charset list -> t
+(** [charset cs] matches any character that is part of [cs]
+    [charset ~neg:true cs] matches any character that is not part of [cs] *)
 
 module Charset : sig
   val range : char -> char -> charset
