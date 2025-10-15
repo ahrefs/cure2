@@ -89,6 +89,8 @@ let tests_instance : t =
       ; ("bbbbb", true)
       ; ("aaaaa]]]aa^^ab", false)
       ; ("]]]]]]b]]", false) ] )
+  ; ( rep (charset Charset.[single 'a'; single '-'; single 'z'])
+    , [("aaa", true); ("zzz", true); ("---", true); ("bcd", false)] )
   ; ( rep (charset Charset.[Ascii.alnum])
     , [("abc123", true); (".", false); ("]]]]]]b]]", false)] )
   ; ( rep (charset Charset.[Ascii.alnum; single '.'])

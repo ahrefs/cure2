@@ -28,6 +28,8 @@ let is_simple = function
 let charset_escape = function
   | '^' ->
       {|\^|}
+  | '-' ->
+      {|\-|}
   | '[' ->
       {|\[|}
   | ']' ->
