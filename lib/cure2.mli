@@ -28,19 +28,16 @@ val seq : t list -> t
 val ( + ) : t -> t -> t
 (** [(+) x y ] is [seq [x; y]] *)
 
-val rep : t -> t
-(** 0 or more matches *)
+val rep : ?min:int -> ?max:int -> t -> t
+(** [rep ~min ~max re] matches [re] at least [min] times
+    and at most [max] times, bounds included.
+    [min] defaults to 0 and [max] to infinity.  *)
 
 val rep1 : t -> t
 (** 1 or more matches *)
 
 val opt : t -> t
 (** 0 or 1 matches *)
-
-val repn : t -> int -> int option -> t
-(** [repn re i j] matches [re] at least [i] times
-    and at most [j] times, bounds included.
-    [j = None] means no upper bound. *)
 
 (** {2 String, line, word} *)
 

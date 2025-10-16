@@ -10,8 +10,7 @@ type t =
   | Charset of bool * charset list
   | Seq of t list
   | Alt of t list
-  | Rep of t
-  | Rep_n of t * int * int option
+  | Rep of {re: t; min: int; max: int option}
   | Regex of string
   | String of string
   | Flags of string * t
@@ -55,14 +54,18 @@ let to_buffer buf t =
               ()
         in
         loop_alt li ; print ")"
-    | Rep a ->
-        non_capturing_group a ; print "*"
-    | Rep_n (t, lo, hi) ->
-        non_capturing_group t ;
+    | Rep {re; min= 0; max= None} ->
+        paren re ; print "*"
+    | Rep {re; min= 1; max= None} ->
+        paren re ; print "+"
+    | Rep {re; min= 0; max= Some 1} ->
+        paren re ; print "?"
+    | Rep {re; min; max} ->
+        paren re ;
         print "{" ;
-        print (string_of_int lo) ;
+        print (string_of_int min) ;
         print "," ;
-        hi |> Option.iter (fun hi -> print (string_of_int hi)) ;
+        max |> Option.iter (fun max -> print (string_of_int max)) ;
         print "}"
     | Regex str ->
         print str
@@ -95,7 +98,7 @@ let to_buffer buf t =
              | Chars str ->
                  str |> String.iter (fun c -> print (charset_escape c)) ) ;
         print "]"
-  and non_capturing_group t =
+  and paren t =
     if is_simple t then loop t else (print "(?:" ; loop t ; print ")")
   in
   loop (Flags ("ms", t))
@@ -120,13 +123,11 @@ let alt li = Alt li
 
 let ( || ) x y = alt [x; y]
 
-let rep t = Rep t
+let rep ?(min = 0) ?max re = Rep {re; min; max}
 
-let rep1 t = seq [t; rep t]
+let rep1 t = rep ~min:1 t
 
-let repn t lo hi = Rep_n (t, lo, hi)
-
-let opt t = repn t 0 (Some 1)
+let opt t = rep ~min:0 ~max:1 t
 
 let any = regex "."
 
