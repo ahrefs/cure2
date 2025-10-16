@@ -1,3 +1,9 @@
+(**
+
+[Cure2]: module to create Re2 regexps using combinators.
+
+*)
+
 type charset
 
 type t
@@ -5,6 +11,18 @@ type t
 val to_re2 : t -> Re2.t
 
 val to_string : t -> string
+
+val regex : string -> t
+(** [regex str] is the regex represented by [str] according to Re2's syntax.
+    Hopefully there should be no need for this, but it could be useful if
+    something is missing
+    No validation is performed on the string, so its possible to get an error
+    from Re2 if there is a syntax error.
+    Beware that using this to set flags can modify the meaning of other
+    combinators, like {!any} which is meant to match new lines.
+*)
+
+(** {2 Constants} *)
 
 val str : string -> t
 
