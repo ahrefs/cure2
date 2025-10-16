@@ -136,6 +136,22 @@ let tests_instance : t =
           ; ("12345e12", true)
           ; ("12345e-12", true)
           ; ("12345E-12", true)
+          ; ("12345.234E-12", true) ] )
+      ; (* with unary operators *)
+        ( !?(chars "+-")
+          + ((!+digit + opt (char '.' + !*digit)) || (char '.' + !+digit))
+          + !?(chars "eE" + !?(chars "+-") + !+digit)
+        , [ ("12345", true)
+          ; ("12345.5", true)
+          ; ("12345e+123", true)
+          ; ("-12345e+123", true)
+          ; (".12345e+123", true)
+          ; ("+.12345e+123", true)
+          ; ("-.12345e+123", true)
+          ; ("+12345e+123", true)
+          ; ("12345e12", true)
+          ; ("12345e-12", true)
+          ; ("12345E-12", true)
           ; ("12345.234E-12", true) ] ) ] ) ]
 
 let () =

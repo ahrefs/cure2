@@ -125,9 +125,15 @@ let ( || ) x y = alt [x; y]
 
 let rep ?(min = 0) ?max re = Rep {re; min; max}
 
+let (!*) x = rep x
+
 let rep1 t = rep ~min:1 t
 
+let (!+) = rep1
+
 let opt t = rep ~min:0 ~max:1 t
+
+let ( !? ) = opt
 
 let any = regex "."
 

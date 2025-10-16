@@ -37,14 +37,11 @@ val alt : t list -> t
 
     The leftmost match is preferred. *)
 
-val ( || ) : t -> t -> t
-(** [(||) x y ] is [alt [x; y]] *)
+
 
 val seq : t list -> t
 (** Sequence *)
 
-val ( + ) : t -> t -> t
-(** [(+) x y ] is [seq [x; y]] *)
 
 val rep : ?min:int -> ?max:int -> t -> t
 (** [rep ~min ~max re] matches [re] at least [min] times
@@ -56,6 +53,23 @@ val rep1 : t -> t
 
 val opt : t -> t
 (** 0 or 1 matches *)
+
+(** {2 Operators} *)
+
+val (!?) : t -> t
+(** [!?re] is [opt re] *)
+
+val (!*) : t -> t
+(** [!?re] is [rep re] *)
+
+val (!+) : t -> t
+(** [!?re] is [rep1 re] *)
+
+val ( || ) : t -> t -> t
+(** [(||) x y ] is [alt [x; y]] *)
+
+val ( + ) : t -> t -> t
+(** [(+) x y ] is [seq [x; y]] *)
 
 (** {2 String, line, word} *)
 
