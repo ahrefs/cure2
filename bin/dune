@@ -1,4 +1,0 @@
-(executable
- (public_name cure2)
- (name main)
- (libraries cure2))
