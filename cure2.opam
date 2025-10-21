@@ -11,8 +11,9 @@ doc: "https://ocaml.org/p/cure2"
 bug-reports: "https://github.com/ahrefs/cure2/issues"
 depends: [
   "dune" {>= "3.19"}
-  "ocaml"
-  "re2"
+  "ocaml" {>= "4.08"}
+  "re2" {>= "v0.16.0"}
+  "alcotest" {with-test & >= "1.8.0"}
   "odoc" {with-doc}
 ]
 build: [

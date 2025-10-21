@@ -19,7 +19,15 @@
  (name cure2)
  (synopsis "Re-like combinators for Re2")
  (description "No need to remember regexp syntax to use Re2.")
- (depends ocaml re2)
+ (depends
+  (ocaml
+   (>= 4.08))
+  (re2
+   (>= v0.16.0))
+  (alcotest
+   (and
+    :with-test
+    (>= 1.8.0))))
  (tags
   ("regexp" "regex")))
 
