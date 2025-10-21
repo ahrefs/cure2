@@ -49,7 +49,9 @@ let tests_instance : t =
         , [ ("cccccc", true)
           ; ("cccccbccc", true)
           ; ("aaaa", false) (*; ("akshfaco24534 fd s f43 \n spof f \t", false)*)
-          ] ) ] )
+          ] )
+      ; (str "a{0,4}", [("a{0,4}", true); ("a", false)])
+      ; (str "a" + str "{0,4}", [("a{0,4}", true); ("a", false)]) ] )
   ; ( "Empty regex"
     , [ ( seq [rep any; bow; str "aabb"]
         , [ ("ccc aabb", true)
