@@ -75,7 +75,7 @@ let to_buffer buf t =
         print "(?" ; print flags ; print ":" ; loop t ; print ")"
     | Group (name, t) ->
         print "(" ;
-        Option.iter (fun name -> print "?<" ; print name ; print ">") name ;
+        Option.iter (fun name -> print "?P<" ; print name ; print ">") name ;
         loop t ;
         print ")"
     | Charset (neg, cs) ->

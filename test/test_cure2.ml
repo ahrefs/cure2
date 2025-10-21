@@ -120,7 +120,7 @@ let tests_instance : t =
           ; ("aa", true)
           ; ("aaaaa", false)
           ; ("aaaaaaaaaaaaaaaaaaaaaa", false) ] ) ] )
-  ; ( "scientific notation numeral"
+  ; ( "complex regexps"
     , [ ( opt (chars "+-")
           + ( (rep1 digit + opt (char '.' + rep digit))
             || (char '.' + rep1 digit) )
@@ -152,7 +152,46 @@ let tests_instance : t =
           ; ("12345e12", true)
           ; ("12345e-12", true)
           ; ("12345E-12", true)
-          ; ("12345.234E-12", true) ] ) ] ) ]
+          ; ("12345.234E-12", true) ] )
+      ; ( (let second_level_char =
+             charset Charset.[Ascii.alnum; chars "-@:%._\\+~#="]
+           in
+           let top_level_chars = charset Charset.[Ascii.alnum; chars "()"] in
+           let path_chars =
+             charset Charset.[Ascii.alnum; chars "()@:%_\\+.~#?&/="]
+           in
+           str "http"
+           + !?(char 's')
+           + str "://"
+           + !?(str "www.")
+           + rep ~min:1 ~max:256 second_level_char
+           + char '.'
+           + rep ~min:1 ~max:6 top_level_chars
+           + bow + rep path_chars )
+        , [ ("https://ahrefs.com/", true)
+          ; ("httpss://ahrefs.com/", false)
+          ; ("https://ocaml.org/p/cure2", true)
+          ; ("https://ocaml.org/p/cu  re2", false) ] )
+      ; ( (let second_level_char =
+             charset Charset.[Ascii.alnum; chars "-@:%._\\+~#="]
+           in
+           let top_level_chars = charset Charset.[Ascii.alnum; chars "()"] in
+           let path_chars =
+             charset Charset.[Ascii.alnum; chars "()@:%_\\+.~#?&/="]
+           in
+           group ~name:"protocol" (str "http" + !?(char 's'))
+           + str "://"
+           + group ~name:"adress"
+               ( !?(str "www.")
+               + rep ~min:1 ~max:256 second_level_char
+               + char '.'
+               + rep ~min:1 ~max:6 top_level_chars )
+           + bow
+           + group (rep path_chars) )
+        , [ ("https://ahrefs.com/", true)
+          ; ("httpss://ahrefs.com/", false)
+          ; ("https://ocaml.org/p/cure2", true)
+          ; ("https://ocaml.org/p/cu  re2", false) ] ) ] ) ]
 
 let () =
   let open Alcotest in
