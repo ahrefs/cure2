@@ -11,6 +11,8 @@ type t
 val to_re2 : t -> Re2.t
 
 val to_string : t -> string
+(** [to_string re] is the string associated with [re]. It can be useful for
+    debugging or sending the regexp over the network. *)
 
 val regex : string -> t
 (** [regex str] is the regex represented by [str] according to Re2's syntax.
@@ -25,51 +27,58 @@ val regex : string -> t
 (** {2 Constants} *)
 
 val str : string -> t
+(** [str s] matches [s].*)
 
 val char : char -> t
+(** [char c] matches the string with one char which is [c]. *)
 
 (** {2 Basic operations on regular expressions} *)
 
 val alt : t list -> t
 (** Alternative.
 
-    [alt []] is equivalent to {!empty}.
+    The leftmost match is preferred.
 
-    The leftmost match is preferred. *)
-
-
+    Infix operator {!(||)} is available. *)
 
 val seq : t list -> t
-(** Sequence *)
+(** Sequence.
 
+    Infix operator {!(+)} is available. *)
 
 val rep : ?min:int -> ?max:int -> t -> t
 (** [rep ~min ~max re] matches [re] at least [min] times
     and at most [max] times, bounds included.
-    [min] defaults to 0 and [max] to infinity.  *)
+    [min] defaults to 0 and [max] to infinity.
+
+    Unary operator {!( !* )} is equivalent.*)
 
 val rep1 : t -> t
-(** 1 or more matches *)
+(** 1 or more matches.
+
+    Unary operator {!(!+)} is equivalent. *)
 
 val opt : t -> t
-(** 0 or 1 matches *)
+(** 0 or 1 matches.
+
+    Unary operator {!(!?)} is equivalent. *)
 
 (** {2 Operators} *)
 
-val (!?) : t -> t
-(** [!?re] is [opt re] *)
+val ( !? ) : t -> t
+(** [!?re] is {!opt}[ re] *)
 
-val (!*) : t -> t
-(** [!?re] is [rep re] *)
+val ( !* ) : t -> t
+(** [!?re] is {!rep}[ re] *)
 
-val (!+) : t -> t
-(** [!?re] is [rep1 re] *)
+val ( !+ ) : t -> t
+(** [!?re] is {!rep1}[ re] *)
 
 val ( || ) : t -> t -> t
-(** [(||) x y ] is [alt [x; y]] *)
+(** [(||) x y ] is {!alt}[ [x; y]] *)
 
 val ( + ) : t -> t -> t
-(** [(+) x y ] is [seq [x; y]] *)
+(** [(+) x y ] is {!seq}[ [x; y]] *)
 
 (** {2 String, line, word} *)
 
@@ -80,16 +89,16 @@ val stop : t
 (** Final position *)
 
 val bol : t
-(** Beginning of line, compiled to ["^"] *)
+(** Beginning of line, compiled to ["^"]. *)
 
 val eol : t
-(** End of line, compiled to ["$"] *)
+(** End of line, compiled to ["$"]. *)
 
 val bow : t
-(** Boundary of (ascii) word *)
+(** Boundary of ascii word *)
 
 val not_bow : t
-(** Not at a boundary of (ascii) word *)
+(** Not at a boundary of ascii word *)
 
 val whole_string : t -> t
 (** Only matches the whole string, i.e. [fun t -> seq [ bos; t; eos ]]. *)
@@ -97,6 +106,7 @@ val whole_string : t -> t
 (** {2 Semantics}*)
 
 val greedy : t -> t
+(** makes [rep] match the most  *)
 
 val non_greedy : t -> t
 
@@ -117,88 +127,88 @@ val notnl : t
 (** any character except newline. *)
 
 val alnum : t
-(** ascii alphanumeric ( [0-9A-Za-z])*)
+(** ascii alphanumeric ([[0-9A-Za-z]])*)
 
 val alpha : t
-(** ascii alphabetic ( [A-Za-z])*)
+(** ascii alphabetic ([[A-Za-z]])*)
 
 val ascii : t
-(** ascii ASCII ( [\x00-\x7F])*)
+(** ASCII ([[\x00-\x7F]])*)
 
 val blank : t
-(** ascii blank ( [\t ])*)
+(** ascii blank ([[\t ]])*)
 
 val cntrl : t
-(** ascii control ( [\x00-\x1F\x7F])*)
+(** ascii control ([[\x00-\x1F\x7F]])*)
 
 val digit : t
-(** ascii digits ( [0-9])*)
+(** ascii digits ([[0-9]])*)
 
 val graph : t
-(** ascii graphical ( [!-~]  [A-Za-z0-9!""#$%&'()*+,\-./:;<=>?@[\\\]^_`{}|~])*)
+(** ascii graphical ([[A-Za-z0-9!""#$%&'()*+,\-./:;<=>?@[\\\]^_`{}|~]])*)
 
 val lower : t
-(** ascii lower case ( [a-z])*)
+(** ascii lower case ([[a-z]])*)
 
 val print : t
-(** ascii printable ( [ -~]  [ [:graph:]])*)
+(** ascii printable ([[ [:graph:]]])*)
 
 val punct : t
-(** ascii punctuation ( [!-/:-@[-`{-~])*)
+(** ascii punctuation ([[!-/:-@[-`{-~]])*)
 
 val space : t
-(** ascii whitespace ( [\t\n\v\f\r ])*)
+(** ascii whitespace ([[\t\n\v\f\r ]])*)
 
 val upper : t
-(** ascii upper case ( [A-Z])*)
+(** ascii upper case ([[A-Z]])*)
 
 val word : t
-(** ascii word characters ( [0-9A-Za-z_])*)
+(** ascii word characters ([[0-9A-Za-z_]])*)
 
 val xdigit : t
-(**	ascii hex digit ( [0-9A-Fa-f])*)
+(**	ascii hex digit ([[0-9A-Fa-f]])*)
 
 val not_alnum : t
-(** not ascii alphanumeric ( [0-9A-Za-z])*)
+(** not ascii alphanumeric ([[^0-9A-Za-z]])*)
 
 val not_alpha : t
-(** not ascii alphabetic ( [A-Za-z])*)
+(** not ascii alphabetic ([[^A-Za-z]])*)
 
 val not_ascii : t
-(** not ascii ASCII ( [\x00-\x7F])*)
+(** not ascii ASCII ([[^\x00-\x7F]])*)
 
 val not_blank : t
-(** not ascii blank ( [\t ])*)
+(** not ascii blank ([[^\t ]])*)
 
 val not_cntrl : t
-(** not ascii control ( [\x00-\x1F\x7F])*)
+(** not ascii control ([[^\x00-\x1F\x7F]])*)
 
 val not_digit : t
-(** not ascii digits ( [0-9])*)
+(** not ascii digits ([[^0-9]])*)
 
 val not_graph : t
-(** not ascii graphical ( [!-~]  [A-Za-z0-9!""#$%&'()*+,\-./:;<=>?@[\\\]^_`{}|~])*)
+(** not ascii graphical ([[^A-Za-z0-9!""#$%&'()*+,\-./:;<=>?@[\\\]^_`{}|~]])*)
 
 val not_lower : t
-(** not ascii lower case ( [a-z])*)
+(** not ascii lower case ([ [a-z] ])*)
 
 val not_print : t
-(** not ascii printable ( [ -~]  [ [:graph:]])*)
+(** not ascii printable ([[^ [:graph:]]])*)
 
 val not_punct : t
-(** not ascii punctuation ( [!-/:-@[-`{-~])*)
+(** not ascii punctuation ([[^!-/:-@[-`{-~]])*)
 
 val not_space : t
-(** not ascii whitespace ( [\t\n\v\f\r ])*)
+(** not ascii whitespace ([[^\t\n\v\f\r ]])*)
 
 val not_upper : t
-(** not ascii upper case ( [A-Z])*)
+(** not ascii upper case ([[^A-Z]])*)
 
 val not_word : t
-(** not ascii word characters ( [0-9A-Za-z_])*)
+(** not ascii word characters ([[^0-9A-Za-z_]])*)
 
 val not_xdigit : t
-(**	not ascii hex digit ( [0-9A-Fa-f])*)
+(**	not ascii hex digit ([[^0-9A-Fa-f]])*)
 
 val chars : string -> t
 (** any character of the string *)
@@ -230,46 +240,46 @@ module Charset : sig
 
   module Ascii : sig
     val alnum : charset
-    (** alphanumeric ( [0-9A-Za-z])*)
+    (** alphanumeric ([[0-9A-Za-z]])*)
 
     val alpha : charset
-    (** alphabetic ( [A-Za-z])*)
+    (** alphabetic ([[A-Za-z]])*)
 
     val ascii : charset
-    (** ASCII ( [\x00-\x7F])*)
+    (** ASCII ([[\x00-\x7F]])*)
 
     val blank : charset
-    (** blank ( [\t ])*)
+    (** blank ([[\t ]])*)
 
     val cntrl : charset
-    (** control ( [\x00-\x1F\x7F])*)
+    (** control ([[\x00-\x1F\x7F]])*)
 
     val digit : charset
-    (** digits ( [0-9])*)
+    (** digits ([[0-9]])*)
 
     val graph : charset
-    (** graphical ( [!-~]  [A-Za-z0-9!""#$%&'()*+,\-./:;<=>?@[\\\]^_`{}|~])*)
+    (** graphical ([[A-Za-z0-9!""#$%&'()*+,\-./:;<=>?@[\\\]^_`{}|~])]*)
 
     val lower : charset
-    (** lower case ( [a-z])*)
+    (** lower case ([[a-z]])*)
 
     val print : charset
-    (** printable ( [ -~]  [ [:graph:]])*)
+    (** printable ([[ [:graph:]]])*)
 
     val punct : charset
-    (** punctuation ( [!-/:-@[-`{-~])*)
+    (** punctuation ([[!-/:-@[]-`{-~]])*)
 
     val space : charset
-    (** whitespace ( [\t\n\v\f\r ])*)
+    (** whitespace ([[\t\n\v\f\r ]])*)
 
     val upper : charset
-    (** upper case ( [A-Z])*)
+    (** upper case ([[A-Z]])*)
 
     val word : charset
-    (** word characters ( [0-9A-Za-z_])*)
+    (** word characters ([[0-9A-Za-z_]])*)
 
     val xdigit : charset
-    (**	hex digit ( [0-9A-Fa-f])*)
+    (**	hex digit ([[0-9A-Fa-f]])*)
   end
 
   module Unicode : sig

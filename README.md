@@ -11,6 +11,18 @@ Instead of `[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?` you can write
 + opt (chars "eE" + opt (chars "+-") + rep1 digit)
 ```
 
+Instead of `"https?:\\/\\/(?:www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b(?:[-a-zA-Z0-9()@:%_\\+.~#?&//=]*)"`,
+you can write:
+```ocaml
+let second_level_char = charset Charset.[alnum; chars "-@:%._\\+~#="] in
+let top_level_chars = charset Charset.[alnum; chars "()"] in
+let path_chars = charset Charset.[alnum; chars "()@:%_\\+.~#?&/="] in
+str "http" + !? char 's' + str "://" + !? (str "www.")
++ rep ~min:1 ~max:256 second_level_char
++ char '.'
++ rep ~min:1 ~max:6 top_level_chars + bow + rep path_chars
+```
+
 This is more verbose but also way more readable. And contrary to regexp you just
 hover on anything you are not familiar with and documentation will show up.
 
