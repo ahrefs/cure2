@@ -92,22 +92,22 @@ val ( + ) : t -> t -> t
 val start : t
 (** Matches the beginning of the text. Does not consume anything.
 
-  Equivalent to re2 syntax [\A]*)
+  Equivalent to re2 syntax [\A] or [^] when [m=true]*)
 
 val stop : t
 (** Matches the end of the text. Does not consume anything.
 
-    Equivalent to re2 syntax [\z]*)
+    Equivalent to re2 syntax [\z] or [$] when [m=false]*)
 
 val bol : t
 (** Matches the beginning of a line. Does not consume anything.
 
-    Equivalent to re2 syntax [^] in multiline mode. *)
+    Equivalent to re2 syntax [^] in multiline mode ([m=true]). *)
 
 val eol : t
 (** Matches the end of a line. Does not consume anything.
 
-    Equivalent to re2 syntax [$] in multiline mode. *)
+    Equivalent to re2 syntax [$] in multiline mode ([m=true]). *)
 
 val bow : t
 (** Matches the boundary of an ascii word. Does not consume anything.
