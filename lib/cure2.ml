@@ -33,33 +33,60 @@ let charset_escape = function
       {|\[|}
   | ']' ->
       {|\]|}
+  | '\n' ->
+      {|\n|}
+  | '\t' ->
+      {|\t|}
   | c ->
       String.make 1 c
 
+let rec flatten_alts = function
+  | Alt li ->
+      Alt
+        ( li |> List.map flatten_alts
+        |> List.concat_map (function Alt li -> li | x -> [x]) )
+  | Seq li ->
+      Seq (li |> List.map flatten_alts)
+  | Rep {re; min; max} ->
+      Rep {re= flatten_alts re; min; max}
+  | Flags (flags, re) ->
+      Flags (flags, flatten_alts re)
+  | Group (name, re) ->
+      Group (name, flatten_alts re)
+  | (Charset _ | Regex _ | String _) as x ->
+      x
+
 let to_buffer buf t =
+  let t = flatten_alts t in
   let print str = Buffer.add_string buf str in
-  let rec loop = function
+  let rec loop ~paren_alt = function
     | Seq li ->
-        List.iter loop li
+        List.iter (loop ~paren_alt:true) li
     | Alt li ->
-        print "(?:" ;
+        if paren_alt then print "(?:" ;
         let rec loop_alt = function
           | elt :: elt' :: li ->
-              loop elt ;
+              (loop ~paren_alt:false) elt ;
               print "|" ;
               loop_alt (elt' :: li)
           | [elt] ->
-              loop elt
+              (loop ~paren_alt:true) elt
           | [] ->
               ()
         in
-        loop_alt li ; print ")"
+        loop_alt li ;
+        if paren_alt then print ")"
     | Rep {re; min= 0; max= None} ->
         paren re ; print "*"
     | Rep {re; min= 1; max= None} ->
         paren re ; print "+"
     | Rep {re; min= 0; max= Some 1} ->
         paren re ; print "?"
+    | Rep {re; min; max= Some max} when min = max ->
+        paren re ;
+        print "{" ;
+        print (string_of_int min) ;
+        print "}"
     | Rep {re; min; max} ->
         paren re ;
         print "{" ;
@@ -72,11 +99,15 @@ let to_buffer buf t =
     | String str ->
         print (Re2.escape str)
     | Flags (flags, t) ->
-        print "(?" ; print flags ; print ":" ; loop t ; print ")"
+        print "(?" ;
+        print flags ;
+        print ":" ;
+        loop ~paren_alt:false t ;
+        print ")"
     | Group (name, t) ->
         print "(" ;
         Option.iter (fun name -> print "?P<" ; print name ; print ">") name ;
-        loop t ;
+        loop ~paren_alt:false t ;
         print ")"
     | Charset (neg, cs) ->
         print "[" ;
@@ -99,9 +130,10 @@ let to_buffer buf t =
                  str |> String.iter (fun c -> print (charset_escape c)) ) ;
         print "]"
   and paren t =
-    if is_simple t then loop t else (print "(?:" ; loop t ; print ")")
+    if is_simple t then loop ~paren_alt:true t
+    else (print "(?:" ; loop ~paren_alt:false t ; print ")")
   in
-  loop (Flags ("ms", t))
+  loop ~paren_alt:true (Flags ("ms", t))
 
 let to_string t =
   let buf = Buffer.create 16 in
@@ -125,11 +157,11 @@ let ( || ) x y = alt [x; y]
 
 let rep ?(min = 0) ?max re = Rep {re; min; max}
 
-let (!*) x = rep x
+let ( !* ) x = rep x
 
 let rep1 t = rep ~min:1 t
 
-let (!+) = rep1
+let ( !+ ) = rep1
 
 let opt t = rep ~min:0 ~max:1 t
 
