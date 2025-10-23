@@ -35,14 +35,15 @@ val char : char -> t
 (** {2 Basic operations on regular expressions} *)
 
 val alt : t list -> t
-(** Alternative.
+(** [alt li], matches any of the strings matches by any of the elements of [li].
 
     The leftmost match is preferred.
 
     Infix operator {!(||)} is available. *)
 
 val seq : t list -> t
-(** Sequence.
+(** [seq [a; b]] matches a string whose first part matches [a] and a second part
+    matches [b].
 
     Infix operator {!(+)} is available. *)
 
@@ -51,17 +52,23 @@ val rep : ?min:int -> ?max:int -> t -> t
     and at most [max] times, bounds included.
     [min] defaults to 0 and [max] to infinity.
 
-    Unary operator {!( !* )} is equivalent.*)
+    Unary operator {!( !* )} is equivalent.
+
+    Equivalent to re2 syntax [*] or [{min,max}] if they are provided. *)
 
 val rep1 : t -> t
 (** 1 or more matches.
 
-    Unary operator {!(!+)} is equivalent. *)
+    Unary operator {!(!+)} is equivalent.
+
+    Equivalent to re2 syntax [+]. *)
 
 val opt : t -> t
 (** 0 or 1 matches.
 
-    Unary operator {!(!?)} is equivalent. *)
+    Unary operator {!(!?)} is equivalent.
+
+    Equivalent to re2 syntax [?]. *)
 
 (** {2 Operators} *)
 
@@ -83,22 +90,34 @@ val ( + ) : t -> t -> t
 (** {2 String, line, word} *)
 
 val start : t
-(** Initial position *)
+(** Matches the beginning of the text. Does not consume anything.
+
+  Equivalent to re2 syntax [\A]*)
 
 val stop : t
-(** Final position *)
+(** Matches the end of the text. Does not consume anything.
+
+    Equivalent to re2 syntax [\z]*)
 
 val bol : t
-(** Beginning of line, compiled to ["^"]. *)
+(** Matches the beginning of a line. Does not consume anything.
+
+    Equivalent to re2 syntax [^] in multiline mode. *)
 
 val eol : t
-(** End of line, compiled to ["$"]. *)
+(** Matches the end of a line. Does not consume anything.
+
+    Equivalent to re2 syntax [$] in multiline mode. *)
 
 val bow : t
-(** Boundary of ascii word *)
+(** Matches the boundary of an ascii word. Does not consume anything.
+
+    Equivalent to re2 syntax [\b]. *)
 
 val not_bow : t
-(** Not at a boundary of ascii word *)
+(** Matches anywhere that is not at a boundary of ascii word. Does not consume anything.
+
+    Equivalent to re2 syntax [\B]. *)
 
 val whole_string : t -> t
 (** Only matches the whole string, i.e. [fun t -> seq [ bos; t; eos ]]. *)
@@ -106,15 +125,24 @@ val whole_string : t -> t
 (** {2 Semantics}*)
 
 val greedy : t -> t
-(** makes [rep] match the most  *)
+(** Makes {!rep} and associated construct match the longest text possible instead of the shortest one.
+
+    This is the default mode.
+
+    Equivalent to the re2 [-u] flag. *)
 
 val non_greedy : t -> t
+(** Makes {!rep} and associated construct match the shortest text possible instead of the longest one.
+
+    This is not the default mode.
+
+    Equivalent to the re2 [u] flag. *)
 
 val case : t -> t
-(** Case sensitive matching. On by default *)
+(** Case sensitive matching. On by default. *)
 
 val no_case : t -> t
-(** Case insensitive matching. Off by default/*)
+(** Case insensitive matching. Off by default.*)
 
 val group : ?name:string -> t -> t
 
