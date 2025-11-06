@@ -48,13 +48,24 @@ val seq : t list -> t
     Infix operator {!(+)} is available. *)
 
 val rep : ?min:int -> ?max:int -> t -> t
-(** [rep ~min ~max re] matches [re] at least [min] times
-    and at most [max] times, bounds included.
-    [min] defaults to 0 and [max] to infinity.
+(** [rep ~min ~max re] matches [re] at least [min] times and at most [max]
+      times, bounds included. [min] defaults to 0 and [max] to infinity.
 
     Unary operator {!( !* )} is equivalent.
 
-    Equivalent to re2 syntax [*] or [{min,max}] if they are provided. *)
+    Equivalent to re2 syntax [*] or [{min,max}] if they are provided.
+
+    Be careful with [min] and [max]: they need to be smaller than 1000, Re2
+    rejects forms that create a minimum or maximum repetition count above 1000.
+    Unlimited repetitions are not subject to this restriction. *)
+
+val rep_exact : int -> t -> t
+(** [rep_exact n t] matches [t] exactly [n] times.
+
+  Be careful with it: it is implemented (by Re2) by actual repetition
+  ([rep_exact 3 digit] becomes [digit + digit + digit]).
+
+  It is also subject to the 1000 limit like {!rep} *)
 
 val rep1 : t -> t
 (** 1 or more matches.

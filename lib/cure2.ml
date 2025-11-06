@@ -114,20 +114,20 @@ let to_buffer buf t =
         if neg then print "^" ;
         cs
         |> List.iter (function
-             | Single c ->
-                 print (charset_escape c)
-             | Ascii name ->
-                 print "[:" ; print name ; print ":]"
-             | Perl name ->
-                 print {|\|} ; print name
-             | Unicode name ->
-                 print {|\p{|} ; print name ; print "}"
-             | Range (lo, hi) ->
-                 print (charset_escape lo) ;
-                 print "-" ;
-                 print (charset_escape hi)
-             | Chars str ->
-                 str |> String.iter (fun c -> print (charset_escape c)) ) ;
+          | Single c ->
+              print (charset_escape c)
+          | Ascii name ->
+              print "[:" ; print name ; print ":]"
+          | Perl name ->
+              print {|\|} ; print name
+          | Unicode name ->
+              print {|\p{|} ; print name ; print "}"
+          | Range (lo, hi) ->
+              print (charset_escape lo) ;
+              print "-" ;
+              print (charset_escape hi)
+          | Chars str ->
+              str |> String.iter (fun c -> print (charset_escape c)) ) ;
         print "]"
   and paren t =
     if is_simple t then loop ~paren_alt:true t
@@ -160,6 +160,8 @@ let rep ?(min = 0) ?max re = Rep {re; min; max}
 let ( !* ) x = rep x
 
 let rep1 t = rep ~min:1 t
+
+let rep_exact n t = rep ~min:n ~max:n t
 
 let ( !+ ) = rep1
 
