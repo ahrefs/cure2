@@ -271,7 +271,7 @@ module Charset = struct
 
     let uppercase_letter = Unicode "Lu"
 
-    let mark = Unicode "M "
+    let mark = Unicode "M"
 
     let spacing_mark = Unicode "Mc"
 
