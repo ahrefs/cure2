@@ -3,21 +3,21 @@ type t = (string * (Cure2.t * (string * bool) list) list) list
 let test_regexp (tests : t) =
   tests
   |> List.map (fun (section, tests) ->
-         ( section
-         , tests
-           |> List.map (fun (re, tests) ->
-                  let test () =
-                    tests
-                    |> List.iter (fun (input, is_match) ->
-                           let re = Cure2.(whole_string re) in
-                           let re_str = Cure2.to_string re in
-                           let re2 = Cure2.to_re2 re in
-                           Alcotest.(check bool)
-                             (Printf.sprintf {|%S ~ "%s"|} input re_str)
-                             is_match (Re2.matches re2 input) )
-                  in
-                  let name = {|"|} ^ Cure2.to_string re ^ {|"|} in
-                  Alcotest.test_case name `Quick test ) ) )
+      ( section
+      , tests
+        |> List.map (fun (re, tests) ->
+            let test () =
+              tests
+              |> List.iter (fun (input, is_match) ->
+                  let re = Cure2.(whole_string re) in
+                  let re_str = Cure2.to_string re in
+                  let re2 = Cure2.to_re2 re in
+                  Alcotest.(check bool)
+                    (Printf.sprintf {|%S ~ "%s"|} input re_str)
+                    is_match (Re2.matches re2 input) )
+            in
+            let name = {|"|} ^ Cure2.to_string re ^ {|"|} in
+            Alcotest.test_case name `Quick test ) ) )
 
 let tests_instance : t =
   let open Cure2 in
