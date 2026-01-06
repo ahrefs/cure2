@@ -33,11 +33,20 @@ let tests_instance : t =
           ; ("bar", true)
           ; ("ba\nr", false)
           ; ("akshfao24534 fd s f43 \n spof f \t", false) ] )
+      ; ( never
+        , [ ("foo", false)
+          ; ("", false)
+          ; ("bar", false)
+          ; ("ba\nr", false)
+          ; ("akshfao24534 fd s f43 \n spof f \t", false) ] )
       ; ( rep (char 'c')
         , [ ("cccccc", true)
           ; ("cccccbccc", false)
           ; ("akshfaco24534 fd s f43 \n spof f \t", false) ] )
       ; ( alt [char 'a'; char 'b']
+        , [("a", true); ("b", true); ("c", false); ("aa", false); ("bb", false)]
+        )
+      ; ( alt [char 'a'; never; char 'b'; never]
         , [("a", true); ("b", true); ("c", false); ("aa", false); ("bb", false)]
         )
       ; ( alt [rep (char 'a'); rep (char 'b')]

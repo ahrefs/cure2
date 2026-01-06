@@ -17,9 +17,11 @@ val to_string : t -> string
 val regex : string -> t
 (** [regex str] is the regex represented by [str] according to Re2's syntax.
     Hopefully there should be no need for this, but it could be useful if
-    something is missing
+    something is missing.
+
     No validation is performed on the string, so its possible to get an error
     from Re2 if there is a syntax error.
+
     Beware that using this to set flags can modify the meaning of other
     combinators, like {!any} which is meant to match new lines.
 *)
@@ -33,6 +35,9 @@ val char : char -> t
 (** [char c] matches the string with one char which is [c]. *)
 
 (** {2 Basic operations on regular expressions} *)
+
+val never: t
+(** [never] matches nothing. *)
 
 val alt : t list -> t
 (** [alt li], matches any of the strings matches by any of the elements of [li].

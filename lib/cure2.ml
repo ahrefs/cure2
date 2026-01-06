@@ -15,6 +15,7 @@ type t =
   | String of string
   | Flags of string * t
   | Group of string option * t
+  | Never
 
 let is_simple = function
   | Group _ | Charset _ | Flags _ ->
@@ -42,9 +43,13 @@ let charset_escape = function
 
 let rec flatten_alts = function
   | Alt li ->
-      Alt
-        ( li |> List.map flatten_alts
-        |> List.concat_map (function Alt li -> li | x -> [x]) )
+      let li =
+        li |> List.map flatten_alts
+        |> List.concat_map (function Alt li -> li | x -> [x])
+        |> List.filter (function Never -> false | _ -> true)
+      in
+      begin match li with [] -> Never | _ :: _ -> Alt li
+      end
   | Seq li ->
       Seq (li |> List.map flatten_alts)
   | Rep {re; min; max} ->
@@ -53,13 +58,15 @@ let rec flatten_alts = function
       Flags (flags, flatten_alts re)
   | Group (name, re) ->
       Group (name, flatten_alts re)
-  | (Charset _ | Regex _ | String _) as x ->
+  | (Charset _ | Regex _ | String _ | Never) as x ->
       x
 
 let to_buffer buf t =
   let t = flatten_alts t in
   let print str = Buffer.add_string buf str in
   let rec loop ~paren_alt = function
+    | Never ->
+        print ".^"
     | Seq li ->
         List.iter (loop ~paren_alt:true) li
     | Alt li ->
@@ -152,6 +159,8 @@ let seq li = Seq li
 let ( + ) x y = seq [x; y]
 
 let alt li = Alt li
+
+let never = Never
 
 let ( || ) x y = alt [x; y]
 
