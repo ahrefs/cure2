@@ -66,7 +66,7 @@ let to_buffer buf t =
   let print str = Buffer.add_string buf str in
   let rec loop ~paren_alt = function
     | Never ->
-        print ".^"
+        print {|.\A|}
     | Seq li ->
         List.iter (loop ~paren_alt:true) li
     | Alt li ->

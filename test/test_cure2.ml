@@ -38,6 +38,7 @@ let tests_instance : t =
           ; ("", false)
           ; ("bar", false)
           ; ("ba\nr", false)
+          ; ("a\n", false)
           ; ("akshfao24534 fd s f43 \n spof f \t", false) ] )
       ; ( rep (char 'c')
         , [ ("cccccc", true)
@@ -46,6 +47,13 @@ let tests_instance : t =
       ; ( alt [char 'a'; char 'b']
         , [("a", true); ("b", true); ("c", false); ("aa", false); ("bb", false)]
         )
+      ; ( alt [char 'a'; char 'b'; alt [char 'd'; alt [char 'e'; char 'f']]]
+        , [ ("a", true)
+          ; ("b", true)
+          ; ("c", false)
+          ; ("f", true)
+          ; ("aa", false)
+          ; ("bb", false) ] )
       ; ( alt [char 'a'; never; char 'b'; never]
         , [("a", true); ("b", true); ("c", false); ("aa", false); ("bb", false)]
         )
